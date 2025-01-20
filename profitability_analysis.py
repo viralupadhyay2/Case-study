@@ -1,24 +1,33 @@
-# profitability_analysis.py
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Load cleaned data
-file_path = "Cleaned_Command_Centre_Dataset.xlsx"
+# Load the cleaned dataset
+file_path = "C:/Users/ASUS/Downloads/Cleaned_Command_Centre_Dataset.xlsx"
 sales_data = pd.read_excel(file_path, sheet_name="Sales_Data")
 
-# Calculate Profit
+# Calculate Profit if not already calculated
 sales_data["Profit"] = sales_data["Revenue"] - sales_data["Cost_of_Goods_Sold"]
 
-# Group by Zone and Product Category
-profitability = sales_data.groupby(["Zone", "Product_Category"])["Profit"].sum().reset_index()
+# Convert 'Date' column to datetime format (if not already done)
+sales_data['Date'] = pd.to_datetime(sales_data['Date'])
 
-# Visualize Profitability
-plt.figure(figsize=(10, 6))
-sns.barplot(data=profitability, x="Zone", y="Profit", hue="Product_Category", palette="viridis")
-plt.title("Profitability by Zone and Product Category")
-plt.xlabel("Zone")
-plt.ylabel("Total Profit")
+# Group by Date to calculate total Profit over time
+profit_trend = sales_data.groupby('Date')["Profit"].sum().reset_index()
+
+# Plot the trend of Profit over time
+plt.figure(figsize=(12, 6))
+sns.lineplot(data=profit_trend, x='Date', y='Profit', marker="o", color='blue')
+plt.title("Trend of Profit Over Time", fontsize=14)
+plt.xlabel("Date", fontsize=12)
+plt.ylabel("Total Profit", fontsize=12)
+plt.grid(True)
 plt.tight_layout()
-plt.savefig("Profitability_Analysis.png")
+
+# Save the plot
+plt.savefig("Profit_Trend_Over_Time.png")
+
+# Display the plot
 plt.show()
+
+print("\nINFO: Trend of profit over time visualization saved as 'Profit_Trend_Over_Time.png'")
